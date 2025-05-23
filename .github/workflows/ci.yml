@@ -1,12 +1,17 @@
-name: CI/CD Pipeline
+name: Build and Test
 
 on:
   push:
     branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
       - master
 
 jobs:
-  build-test-deploy:
+  build-test:
     runs-on: ubuntu-latest
 
     steps:
