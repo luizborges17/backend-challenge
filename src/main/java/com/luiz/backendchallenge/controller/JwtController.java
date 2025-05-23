@@ -21,5 +21,4 @@ public class JwtController {
         boolean isValid = validationService.validateJwt(request.jwt());
         return new JwtValidationResponse(isValid);
     }
-
 }
