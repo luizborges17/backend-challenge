@@ -1,128 +1,254 @@
-# Descrição
 
-Construa uma aplicação que exponha uma api web que recebe por parametros um JWT (string) e verifica se é valida conforme regras abaixo:
+# Backend Challenge - Validação de JWT
 
-- Deve ser um JWT válido
-- Deve conter apenas 3 claims (Name, Role e Seed)
-- A claim Name não pode ter carácter de números
-- A claim Role deve conter apenas 1 dos três valores (Admin, Member e External)
-- A claim Seed deve ser um número primo.
-- O tamanho máximo da claim Name é de 256 caracteres.
+Este projeto é uma API RESTful construída com Spring Boot 3 para resolver um desafio técnico de backend. A aplicação foca em autenticação via JWT, boas práticas de engenharia de software e monitoramento.
 
-#  Definição
-Input: Um JWT (string).  
-Output: Um boolean indicando se a valido ou não.
+## 🧠 Objetivo
 
-Use a linguagem de programação que considera ter mais conhecimento.
+O desafio proposto consiste na construção de uma API web que recebe como parâmetro um JWT (JSON Web Token) no formato de string e realiza sua validação com base nas seguintes regras:
 
-# Massa de teste 
+1. O JWT deve ser válido (estrutura e assinatura corretas).
+2. Deve conter **apenas 3 claims**: `Name`, `Role` e `Seed`.
+3. A claim `Name`:
+   - Não pode conter caracteres numéricos.
+   - Deve ter no máximo **256 caracteres**.
+4. A claim `Role` deve conter apenas **um dos seguintes valores**:
+   - `Admin`
+   - `Member`
+   - `External`
+5. A claim `Seed` deve ser um **número primo**.
 
-### Caso 1:
-Entrada:
+### Entrada esperada:
+- Um JWT (string).
+
+### Saída esperada:
+- Um **booleano** indicando se o token é válido ou não com base nas regras acima.
+
+### Exemplos fornecidos:
+- Um token com `"Name": "Toninho Araujo", "Role": "Admin", "Seed": "7841"` é considerado válido.
+- Um token com caracteres numéricos na claim `Name`, mais de três claims, ou `Seed` que não seja número primo deve retornar falso.
+
+---
+
+A avaliação desta etapa também contempla:
+
+- Qualidade e cobertura de testes (unitários e de integração).
+- Boas práticas de abstração, coesão, acoplamento e extensibilidade.
+- Qualidade do design da API e aplicação dos princípios SOLID.
+- Clareza e completude da documentação (`README`).
+- Histórico de commits bem estruturado e representativo.
+- Implementação de observabilidade (logging, tracing e monitoring).
+- Containerização da aplicação com Docker.
+- Provisionamento de infraestrutura em nuvem (preferencialmente AWS).
+- Deploy automatizado (CI/CD) e uso de ferramentas como Helm e Terraform.
+- Disponibilização da API em algum provedor de nuvem.
+- Uso de Engenharia de Prompt e organização geral do projeto.
+
+Este projeto foi desenvolvido considerando todos esses critérios com o objetivo de demonstrar minha capacidade de entregar soluções de qualidade, escaláveis, seguras e bem documentadas, como seria esperado em ambientes de produção.
+
+
+## ⚙️ Tecnologias Utilizadas e Justificativas
+
+| Tecnologia                          | Justificativa                                                                                     |
+|-----------------------------------|-------------------------------------------------------------------------------------------------|
+| **Java 17 + Spring Boot 3**       | Ecossistema robusto, moderno, com suporte nativo a observabilidade via Micrometer e integração com OpenAPI. |
+| **Spring Validation**              | Facilita a validação de payloads com anotações simples e reutilizáveis.                          |
+| **JWT (JJWT + Auth0)**             | Libs consolidadas para geração e validação de tokens com suporte a claims customizados.          |
+| **Spring Actuator**                | Coleta de métricas de saúde, uso de recursos e endpoints customizados.                          |
+| **Prometheus**                    | Monitoramento e visualização de métricas em tempo real.                                        |
+| **Micrometer**                    | Observabilidade com tracing de requisições.                                                    |
+| **Swagger (SpringDoc OpenAPI)**  | Geração automática de documentação interativa da API.                                          |
+| **Docker + Docker Compose**       | Facilita o provisionamento do ambiente local completo e portável.                              |
+| **GitHub Actions (CI)**           | Automação de integração contínua através de workflows configuráveis para garantir qualidade do código. |
+| **Render (CD)**                   | Plataforma gratuita para deploy contínuo, simplificando o processo de entrega da aplicação.     |
+| **JUnit + MockMvc (Testes Unitários e Integrados)** | Ferramentas consolidadas para garantir qualidade e cobertura de testes da API.                 |
+| **Padrões de Projeto: Factory e Strategy** | Facilita a organização, manutenção e escalabilidade do código com boas práticas de design.      |
+| **Insomnia**                     | Ferramenta para consumir e testar a API de forma rápida e eficiente.                            |
+| **Conventional Commits**          | Padronização dos commits para melhor organização e legibilidade. |
+
+---
+
+## 🔄 CI/CD Detalhado
+
+### Integração Contínua (CI) com GitHub Actions
+
+- **Workflow configurado para:**  
+  1 . Realizar checkout do código.  
+  2 . Configurar JDK 17 (Temurin).  
+  3 . Compilar o projeto com Maven, rodando os testes automaticamente.  
+  4 . Executar testes unitários e de integração com JUnit e MockMvc.  
+  5 . Construir a imagem Docker com tag baseada no commit.  
+  6 . Preparar o ambiente para deploy contínuo.
+
+
+  
+### Deploy Contínuo (CD) com Render
+
+- **Deploy automático acionado por webhook** logo após a pipeline CI finalizar com sucesso.  
+- Facilita a entrega contínua da aplicação sem intervenção manual.  
+- Garante que a versão em produção esteja sempre atualizada com o branch principal.
+---
+
+## 📦 Requisitos
+
+- Docker Desktop
+- Java 17
+- Maven
+- Insomnia/Postman
+- Desenvolvimento realizado em ambiente Windows
+
+---
+
+## ▶️ Como executar com Docker
+
+### 1. Clone o repositório
+
+```bash
+git clone https://github.com/luizborges17/backend-challenge.git
 ```
-eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJTZWVkIjoiNzg0MSIsIk5hbWUiOiJUb25pbmhvIEFyYXVqbyJ9.QY05sIjtrcJnP533kQNk8QXcaleJ1Q01jWY_ZzIZuAg
+
+### 2. Compile o projeto
+
+```bash
+./mvnw clean package -DskipTests
 ```
-Saida:
+
+### 3. Suba os containers
+
+```bash
+docker-compose up --build
 ```
-verdadeiro
-```
-Justificativa:
-Abrindo o JWT, as informações contidas atendem a descrição:
+
+> Isso iniciará:
+- API na porta `8080`
+- Prometheus na `http://localhost:9090`
+
+---
+
+## 🔐 JWT - Validação
+
+A API valida tokens JWT passados no body da requisição. Caso o token seja inválido, expirado ou malformado, a API retorna um boolean false.
+
+> 🔹 Para testar e validar facilmente, basta importar o arquivo `backend-challenge-insomnia.json`, que está na raiz do projeto, no Insomnia ou Postman para consumir a API localmente.
+
+---
+
+## 🧪 Endpoints
+
+### `POST /api/validate`
+
+Valida o JWT enviado no corpo da requisição no formato JSON:
+
+**Request body:**
+
 ```json
 {
-  "Role": "Admin",
-  "Seed": "7841",
-  "Name": "Toninho Araujo"
+  "jwt": "<token_jwt_aqui>"
 }
 ```
 
-### Caso 2:
-Entrada:
-```
-eyJhbGciOiJzI1NiJ9.dfsdfsfryJSr2xrIjoiQWRtaW4iLCJTZrkIjoiNzg0MSIsIk5hbrUiOiJUb25pbmhvIEFyYXVqbyJ9.QY05fsdfsIjtrcJnP533kQNk8QXcaleJ1Q01jWY_ZzIZuAg
-```
-Saida:
-```
-falso
-```
-Justificativa:
-JWT invalido
+---
 
-### Caso 3:
-Entrada:
+## 📊 Observabilidade
+
+### 📈 Métricas com Prometheus
+
+- Expostas automaticamente em `/actuator/prometheus`
+- Incluem métricas que garantem a observabilidade.
+Acesse: [http://localhost:9090](http://localhost:9090)
+
+### 🔍 Tracing com Micrometer
+
+- Cada requisição HTTP gera **traceId** e **spanId** para rastreamento detalhado.
+- Gera **spans distribuídos** que representam unidades de trabalho dentro da requisição.
+- Permite integração via OTLP.
+- Permite rastrear requisições ponta-a-ponta, facilitando a observabilidade em sistemas distribuídos.
+  
+---
+
+## 📄 Documentação da API
+
+- Geração automática com Swagger ao subir o projeto com Dokcer
+- Acesse: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+
+---
+
+## 🧱 Estrutura do Projeto MVC
+
 ```
-eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiRXh0ZXJuYWwiLCJTZWVkIjoiODgwMzciLCJOYW1lIjoiTTRyaWEgT2xpdmlhIn0.6YD73XWZYQSSMDf6H0i3-kylz1-TY_Yt6h1cV2Ku-Qs
-```
-Saida:
-```
-falso
-```
-Justificativa:
-Abrindo o JWT, a Claim Name possui caracter de números
-```json
-{
-  "Role": "External",
-  "Seed": "72341",
-  "Name": "M4ria Olivia"
-}
+src/
+├── model/ # Modelos de dados e entidades
+├── controller/ # Camada Controller (Endpoints REST)
+├── service/ # Camada Service (Regras de negócio e validação de tokens)
+├── util/ # Utilitários diversos (ex: validação de número primo)
+└── Application.java # Classe principal para inicialização da aplicação
 ```
 
-### Caso 4:
-Entrada:
-```
-eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiTWVtYmVyIiwiT3JnIjoiQlIiLCJTZWVkIjoiMTQ2MjciLCJOYW1lIjoiVmFsZGlyIEFyYW5oYSJ9.cmrXV_Flm5mfdpfNUVopY_I2zeJUy4EZ4i3Fea98zvY
-```
-Saida:
-```
-falso
-```
-Justificativa:
-Abrindo o JWT, foi encontrado mais de 3 claims.
-```json
-{
-  "Role": "Member",
-  "Org": "BR",
-  "Seed": "14627",
-  "Name": "Valdir Aranha"
-}
-```
-## Pontos que daremos maior atenção
+---
 
-- Testes de unidade / integração
-- Abstração, acoplamento, extensibilidade e coesão
-- Design de API
-- SOLID
-- Documentação da solução no *README* 
-- Commits realizados durante a construção
-- Observability (Logging/Tracing/Monitoring)
+## 🤔 Por que essa arquitetura?
 
-## Demais Itens
+1. **Separação de responsabilidades**: a estrutura clara entre `model`, `controller`, `service` e `util` facilita testes, manutenção e escalabilidade do projeto.
+2. **Modelos de dados bem definidos**: as entidades no pacote `model` garantem organização e integridade das informações manipuladas.
+3. **Utilitários dedicados**: funções auxiliares, como a validação de número primo, ficam isoladas no pacote `util`, melhorando reutilização e clareza.
+4. **Observabilidade nativa**: integração com ferramentas de monitoramento e tracing para maior visibilidade em ambientes produtivos.
+5. **Uso de boas práticas REST**: aplicação padronizada, com versionamento e mensagens claras para melhor comunicação com clientes da API.
 
-- Containerização da aplicação
-- Helm Chart em um cluster de Kubernetes/ECS/FARGATE
-- Repositório no GitHub.
-- Deploy Automatizado para Infra-Estrutura AWS
-- scripts ci/cd
-- coleções do Insomnia ou ferramentas para execução
-- Provisione uma infraestrutura na AWS com OpenTerraform
-- expor a api em algum provedor de cloud (aws, azure...)
-- Uso de Engenharia de Prompt.
+## 🧩 Descrição dos Métodos e Padrões de Projeto
 
-### Sobre a documentação
+### Padrão Strategy e Factory na Validação de Claims do JWT
 
-Nesta etapa do processo seletivo queremos entender as decisões por trás do código, portanto é fundamental que o *README* tenha algumas informações referentes a sua solução.
+#### ClaimValidationStrategy (Interface)
+- Define o contrato para todas as estratégias de validação de claims.
+- Métodos principais:
+  - `boolean validate(String value)`: valida o valor da claim conforme regras específicas.
+  - `String getClaimName()`: retorna o nome da claim que a estratégia valida.
 
-Algumas dicas do que esperamos ver são:
+#### Implementações Concretas das Estratégias
+- **NameClaimValidation**:  
+  Valida se o nome é uma string com até 256 caracteres, contendo apenas letras e sem espaços internos.
+- **RoleClaimValidation**:  
+  Verifica se o valor está dentro de um conjunto fixo de papéis permitidos ("Admin", "Member", "External").
+- **SeedClaimValidation**:  
+  Confirma se o valor é um número primo, garantindo que o seed seja válido.
 
-- Instruções básicas de como executar o projeto;
-- Detalhes da descrição dos metodos
-- Caso algo não esteja claro e você precisou assumir alguma premissa, quais foram e o que te motivou a tomar essas decisões.
+Essas classes implementam a interface `ClaimValidationStrategy`, encapsulando diferentes regras de validação para claims específicas.
 
-## Como esperamos receber sua solução
+#### ClaimValidationFactory
+- Atua como uma **Factory** que gerencia o registro e fornecimento das estratégias de validação.
+- Mantém um mapa estático associando o nome da claim à sua respectiva estratégia.
+- Métodos principais:
+  - `register(ClaimValidationStrategy strategy)`: registra uma nova estratégia no mapa.
+  - `getStrategy(String claimName)`: retorna a estratégia para o nome da claim solicitada.
 
-Esta etapa é eliminatória, e por isso esperamos que o código reflita essa importância.
+Essa fábrica abstrai a criação e localização da estratégia correta, permitindo adicionar facilmente novas validações sem alterar o serviço principal.
 
-Se tiver algum imprevisto, dúvida ou problema, por favor entre em contato com a gente, estamos aqui para ajudar.
+#### JwtValidationService
+- Serviço que orquestra a validação do JWT:
+  1. Decodifica o token e obtém suas claims.
+  2. Verifica se todas as claims obrigatórias estão presentes e se não há extras.
+  3. Para cada claim obrigatória, obtém a estratégia de validação via `ClaimValidationFactory`.
+  4. Executa a validação usando a estratégia correspondente.
+  5. Retorna `true` se todas as validações passarem, caso contrário `false`.
 
-Nos envie o *link de um repo público* com a sua solução
+Dessa forma, o serviço utiliza o **padrão Strategy** para aplicar regras diferentes de forma flexível, e a **Factory** para gerenciar essas estratégias, garantindo código aberto para extensão e fechado para modificação (Princípio Open/Closed).
+
+---
+
+### Benefícios da abordagem
+
+- **Extensibilidade:** Novas estratégias podem ser adicionadas sem mexer no código existente do serviço.
+- **Separação de responsabilidades:** Cada estratégia encapsula sua lógica específica de validação.
+- **Manutenção facilitada:** Validações complexas ficam isoladas, facilitando testes e ajustes.
+- **Flexibilidade:** A factory pode ser facilmente modificada para carregar estratégias dinamicamente, se necessário.
+
+---
+
+### Fluxo resumido de validação do JWT
+
+1. O token JWT é decodificado e suas claims extraídas.
+2. Confere se as claims obrigatórias estão presentes.
+3. Para cada claim, busca a estratégia no `ClaimValidationFactory`.
+4. Executa a validação usando a estratégia encontrada.
+5. Retorna o resultado geral da validação.
 
